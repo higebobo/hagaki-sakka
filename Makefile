@@ -34,7 +34,7 @@ status:
 	git status
 
 commit:
-	git commit -a -m 'modify'
+	git commit -a
 
 pull:
 	git pull
