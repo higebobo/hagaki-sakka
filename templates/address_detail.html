@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block content %}        
+{% if prev %}
+        <p>
+          <a class="button" href="{{ url_for('address_detail', year=year, oid=prev.id) }}">{{ prev.name }}</a>{% endif %}{% if next %}{% if prev %}&nbsp;{% endif %}<a class="button" href="{{ url_for('address_detail', year=year, oid=next.id) }}">{{ next.name }}</a>
+        </p>
+{%- endif %}
         <h3>{{ _('additional information') }}</h3>
         <form id="nanga" method="POST">
           <div class="row">
@@ -17,7 +22,7 @@
                 {{ form.note }}
             </div>
             <div class="large-12 columns">
-              <input type="submit" value="{% block submit_button_value %}{{ _('submit') }}{% endblock %}" onclick='return confirm("{{ _('Are you sure ?') }}")';/>
+              <input type="submit" value="{% block submit_button_value %}{{ _('submit') }}{% endblock %}"{# onclick='return confirm("{{ _('Are you sure ?') }}")'; #}/>
             </div>
           </div>
         </form>
@@ -86,7 +91,7 @@
         
 {% if prev %}
         <p>
-          <a href="{{ url_for('address_detail', year=year, oid=prev.id) }}">{{ prev.name }}</a>{% endif %}{% if next %}{% if prev %}&nbsp;|&nbsp;{% endif %}<a href="{{ url_for('address_detail', year=year, oid=next.id) }}">{{ next.name }}</a>
+          <a class="button" href="{{ url_for('address_detail', year=year, oid=prev.id) }}">{{ prev.name }}</a>{% endif %}{% if next %}{% if prev %}&nbsp;{% endif %}<a class="button" href="{{ url_for('address_detail', year=year, oid=next.id) }}">{{ next.name }}</a>
         </p>
 {%- endif %}
         

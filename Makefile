@@ -3,7 +3,7 @@ CSS_DIR=../../static/css
 PY_DIR=${HOME}/.virtualenv/py33
 PY2_DIR=${HOME}/.virtualenv/py27
 
-all: run2
+all: run
 
 clean-css:
 	cd ${SCSS_DIR};rm -f *.css
