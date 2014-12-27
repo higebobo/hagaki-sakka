@@ -1,0 +1,11 @@
+*.hg*
+*.pyc
+*.bak
+*.orig
+log
+data
+assets/src
+.sass-cache
+#translations/ja/LC_MESSAGES/messages.mo
+messages.mo
+__pycache__

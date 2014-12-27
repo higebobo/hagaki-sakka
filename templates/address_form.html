@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <p>
+          <a href="{{ url_for('index') }}">{{ _('top') }}</a>&nbsp;|&nbsp;
+          <a href="{{ url_for('user_list') }}">{{ _('all user list') }}</a>
+        </p>
+        <p>
+        <form id="data" method="POST">
+          <div class="row">
+            <div class="small-8">
+            {% for field in form %}
+              <div class="row">
+                {% if field.type=='BooleanField' %}
+                <div class="small-3 columns">
+                </div>
+                <div class="small-9 columns">
+                  {{ field }}
+                  {{ field.label }}
+                </div>
+                {% else %}                
+                <div class="small-3 columns">
+                  <label for="right-label" class="right inline">{{ field.label }}</label>
+                </div>
+                <div class="small-9 columns">
+                  {{ field }}
+                </div>
+              {% endif %}
+              </div>
+            {% endfor %}
+              <div class="small-3 columns">
+              </div>
+              <div class="small-9 columns">
+                <input type="submit" value="{% block submit_button_value %}{{ _('submit') }}{% endblock %}" onclick='return confirm("{{ _('Are you sure ?') }}")';/>
+              </div>
+            </div>
+          </div>
+        </form>
+{% endblock %}
