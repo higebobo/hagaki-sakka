@@ -44,3 +44,7 @@ add new year data
 * 2014-06-11
 
     - First release
+
+* 2014-12-27
+
+    - Make repository in github.com

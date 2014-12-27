@@ -31,19 +31,15 @@ test:
 	${PY_DIR}/bin/nosetests -v *.py
 
 status:
-	hg status
+	git status
 
 commit:
-	hg commit -m 'modify'
+	git commit -a -m 'modify'
 
 pull:
-	hg pull
-	hg update
+	git pull
 
 push:
-	hg push
+	git push origin master
 
 commit-push: commit push
-
-glog:
-	hg glog --style compact
