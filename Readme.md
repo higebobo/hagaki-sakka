@@ -19,32 +19,23 @@ get source from repository
 
 run server
 
-    $ python app.py
+    $ python manage.py runserver
 
 run server (via GNU Make)
 
     $ make run
 
-## Command line usage
-
-import data from raw csv
-
-    $ ./main.py -m import -y <year> (--init)
-
-export data into csv for hagaki sakka importable
-
-    $ ./main.py -m export -y <year>
-
-add new year data
-
-    $ ./main.py -m add -y <year>
-
 ## Release note
+
+* 2015-10-19
+
+    - Update to use class based view and so on
+
+* 2014-12-27
+
+    - Make repository in github.com
 
 * 2014-06-11
 
     - First release
 
-* 2014-12-27
-
-    - Make repository in github.com

@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- mode: python -*- -*- coding: utf-8 -*-
-from cStringIO import StringIO
+try:
+    from cStringIO import StringIO
+except:
+    from io import StringIO
 import csv
 import os
 
