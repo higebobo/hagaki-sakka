@@ -1,1 +1,31 @@
 @charset "UTF-8";
+
+header {
+  .title {
+    h1 {
+      &.hide-for-small {
+        padding-left: 1em;
+        font-size: 28px;
+      }
+      a {
+        color: white;
+        &:hover {
+          color: palewhite;
+        }
+      }
+    }
+  }
+}
+
+i {
+  &.fa {
+    margin-right: .5em;
+    //margin-left: .5em;
+  }
+}
+
+p {
+  &.nav {
+    margin-top: .5em;
+  }
+}

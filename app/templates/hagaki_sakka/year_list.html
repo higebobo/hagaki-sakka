@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if object_list %}
+        <ul>
+{% for year in object_list %}
+          <li><a href="{{ url_for('.address_list', year=year) }}">{{ year }}</a></li>
+{%- endfor %}  
+        </ul>
+{% else %}
+{%- endif %}
+{% endblock %}

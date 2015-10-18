@@ -1,0 +1,66 @@
+<!doctype html>
+<!--[if IE 9]><html class="lt-ie10" lang="ja" > <![endif]-->
+<html class="no-js" lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/modernizr.js') }}"></script>
+{% block extra_head %}{% endblock %}
+  </head>
+
+  <body>
+    <header class="top-bar docs-bar" data-topbar>
+      <div class="title">
+        <h1 class="hide-for-small"><a href="{{ url_for('.index') }}">{{ config.SITE_TITLE }}</a></h1>
+        <h1 class="show-for-small mobile"><a href="{{ url_for('.index') }}">{{ config.SITE_TITLE }}</a></h1>
+      </div>
+    </header>
+
+    <main>
+      <div class="row">
+        <div class="large-12 columns">
+          <h2>{{ title }}</h2>
+        </div>
+      </div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+      <div class="row">
+        <div class="large-9 columns">
+          <ul class="flashes">
+{% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+{% endfor %}
+          </ul>
+        </div>
+      </div>
+{% endif %}
+{% endwith %}
+      <div class="row">
+        <div class="large-9 columns">
+{% block content %}{% endblock %}
+        </div>
+        <div class="large-3 columns">
+          <ul>
+            <li><a href="{{ url_for('index') }}">{{ _('top') }}</a></li>
+            <li><a href="{{ url_for('.person_list') }}">{{ _('all person list') }}</a></li>
+            <li><a href="{{ url_for('.address_add') }}">{{ _('add new address') }}</a></li>
+            <li><a href="{{ url_for('.year_list') }}">{{ _('year list') }}</a></li>
+          </ul>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <p><small></small></p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/foundation.min.js') }}"></script>    
+{% block extra_script %}{% endblock %}
+  </body>
+</html>
