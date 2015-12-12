@@ -9,4 +9,7 @@
         </ul>
 {% else %}
 {%- endif %}
+        <p>
+          <a class="button small round info" href="{{ url_for('year_add') }}"><i class="fa fa-gavel"></i>{{ _('add new year') }}</a>
+        </p>        
 {% endblock %}

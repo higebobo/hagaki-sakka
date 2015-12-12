@@ -16,7 +16,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from config import APP_NAME
 from .database import db_session
-from .forms import DataEditForm, NengaForm
+from .forms import DataEditForm, NengaForm, YearAddForm
 from .models import Nenga, Data
 
 def tos(s):
@@ -40,6 +40,37 @@ class YearListView(View):
                                object_list=object_list,
                                title=_(u'year list'))
 
+class YearAddView(MethodView):
+    def get(self):
+        form = YearAddForm()
+        return render_template('hagaki_sakka/year_form.html',
+                               form=form,
+                               title=_(u'add new year'))
+
+    def post(self):
+        form = YearAddForm(request.form)
+        if form.validate():
+            year = form.year.data
+            object_list = db_session.query(Data).join(Nenga)\
+                          .filter(Nenga.year==year)
+            if object_list.count():
+                form.year.errors.append(_(u'Year %(year)s is already exists',
+                                        year=year))
+            else:
+                object_list = db_session.query(Data)\
+                              .filter(Data.invalid==False)
+                for obj in object_list:
+                    nenga = Nenga()
+                    nenga.year = year
+                    nenga.data_id = obj.id
+                    db_session.add(nenga)
+                db_session.commit()
+                return redirect(url_for('.address_list', year=year))
+
+        return render_template('hagaki_sakka/year_form.html',
+                               form=form,
+                               title=_(u'add new year'))
+
 class PersonListView(View):
     def dispatch_request(self):
         object_list = db_session.query(Data).order_by('yomi')
@@ -47,9 +78,19 @@ class PersonListView(View):
                                object_list=object_list,
                                title=_(u'all person list'))
 
+class PersonDetailView(MethodView):
+    def get(self, oid):
+        data = db_session.query(Data).filter(Data.id==oid).first()
+        if not data:
+            abort(404)
+        return render_template('hagaki_sakka/address_detail.html',
+                               data=data,
+                               title=_(u'detail about %(name)s',
+                                       name=data.name))
+
 class AddressListView(MethodView):
     def get(self, year):
-        object_list = db_session.query(Data).join(Nenga)\
+        object_list = db_session.query(Nenga).join(Data)\
                       .filter(Nenga.year==year).order_by('yomi')
         return render_template('hagaki_sakka/address_list.html',
                                year=year,
@@ -140,10 +181,10 @@ class AddressAddView(MethodView):
             try:
                 db_session.commit()
                 flash(_(u'Add %(oid)s %(name)s.', oid=data.id, name=data.name))
-                app.logger.info(u'Add %s.' % data.name)
+                current_app.logger.info(u'Add %s.' % data.name)
             except Exception as e:
                 flash(_(u'Error %(error)s', error=e))
-                app.logger.fatal(e)
+                current_app.logger.fatal(e)
                 db_session.rollback()
 
         return render_template('hagaki_sakka/address_form.html',
@@ -168,8 +209,10 @@ class AddressEditView(MethodView):
 
     def post(self, oid):
         data = self.is_exist(oid)
+        print data
         form = DataEditForm(request.form)
         if form.validate():
+            """
             if ((data.name, data.zipcode, data.address1, data.address2) != (form.name.data, form.zipcode.data, form.address1.data, form.address2.data)):
                 update_form_data = None
                 data = Data()
@@ -177,22 +220,27 @@ class AddressEditView(MethodView):
                 update_form_data = dict(((k, v.data)
                                  for k, v in form.__dict__['_fields'].items()))
                 db_session.query(Data).filter_by(id=data.id).update(update_form_data)
+            """
+            update_form_data = dict(((k, v.data) for k, v
+                                     in form.__dict__['_fields'].items()))
+            db_session.query(Data).filter_by(id=data.id)\
+            .update(update_form_data)
             try:
                 db_session.commit()
                 if update_form_data:
                     flash(_(u'Update %(oid)s %(name)s.', oid=data.id,
                             name=data.name))
-                    app.logger.info(u'Update %s.' % data.id)
+                    current_app.logger.info(u'Update %s.' % data.id)
                 else:
                     old_data = Data.query.filter_by(id=oid).one()
                     old_data.invalid = True
                     flash(_(u'Add %(oid)s %(name)s.', oid=data.id,
                             name=data.name))
-                    app.logger.info(u'Add %s.' % data.id)
+                    current_app.logger.info(u'Add %s.' % data.id)
                 return redirect(url_for('.address_edit', oid=data.id))
             except Exception as e:
                 flash(_(u'Error %(error)s', error=e))
-                app.logger.fatal(e)
+                current_app.logger.fatal(e)
                 db_session.rollback()
             
         return render_template('hagaki_sakka/address_form.html',
@@ -201,12 +249,16 @@ class AddressEditView(MethodView):
                                        name=data.name))
 
 class AddressExportView(MethodView):
-    def get(self, year):
+    def get(self, year=None):
         title = (u'氏名', u'ふりがな', u'敬称', u'グループ', u'郵便番号', u'住所 1', u'住所 2', u'電話番号', u'FAX番号', u'携帯電話番号', u'メール 1', u'メール 2', u'ホームページ', u'備考', u'家族 1 名前', u'家族 1 ふりがな', u'家族 1 敬称', u'家族 2 名前', u'家族 2 ふりがな', u'家族 2 敬称', u'家族 3 名前', u'家族 3 ふりがな', u'家族 3 敬称', u'家族 4 名前', u'家族 4 ふりがな', u'家族 4 敬称', u'家族 5 名前', u'家族 5 ふりがな', u'家族 5 敬称')
     
         data = [[tos(x) for x in title]]
-        for x in db_session.query(Data).filter_by(invalid=False)\
-                .filter_by(abroad=False).join(Nenga).filter(Nenga.year==year):
+        object_list = db_session.query(Data)
+        if year:
+            object_list = object_list.filter_by(invalid=False)\
+                          .filter_by(abroad=False).join(Nenga)\
+                          .filter(Nenga.year==year)
+        for x in object_list:
             row = (x.name, x.yomi, x.title, '', x.zipcode, x.address1,
                    x.address2, x.tel, x.fax, x.mobile, x.mail, '', '', x.note,
                    x.firstname2, '', x.title2, x.firstname3, '', x.title3,
@@ -218,8 +270,12 @@ class AddressExportView(MethodView):
         writer = csv.writer(fp, delimiter=',', quotechar='"',
                             quoting=csv.QUOTE_MINIMAL)
         writer.writerows(data)
+        
+        name = 'address'
+        if year:
+            name += str(year)
         response = make_response(fp.getvalue())
         response.headers['Content-Type'] = '%s' % mime_type
-        response.headers['Content-Disposition'] = 'filename="address.csv"'
+        response.headers['Content-Disposition'] = 'filename="%s.csv"' % name
         
         return response

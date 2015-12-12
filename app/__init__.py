@@ -9,8 +9,9 @@ from flask import Flask, request, redirect, session, url_for, flash, \
 from flask.ext.babel import Babel
 from flask.ext.babel import gettext as _
 
-from .views import IndexView, YearListView, PersonListView, AddressListView, \
-     AddressDetailView, AddressAddView, AddressEditView, AddressExportView
+from .views import IndexView, YearListView, YearAddView, PersonListView, \
+     PersonDetailView, AddressListView, AddressDetailView, AddressAddView, \
+     AddressEditView, AddressExportView
 
 def not_exist_makedirs(path):
     if not os.path.exists(path):
@@ -44,11 +45,14 @@ def setup(app, max_byte=100000, backup_count=10):
     # routing
     app.add_url_rule('/', view_func=IndexView.as_view('index'))
     app.add_url_rule('/year/', view_func=YearListView.as_view('year_list'))
-    app.add_url_rule('/<int:year>/', strict_slashes=True,
+    app.add_url_rule('/year/<int:year>/', strict_slashes=True,
                      view_func=AddressListView.as_view('address_list'))
-    app.add_url_rule('/<int:year>/<int:oid>/', methods=['GET', 'POST'],
+    address_detail_view_func = AddressDetailView.as_view('address_detail')
+    app.add_url_rule('/year/<int:year>/<int:oid>/', methods=['GET', 'POST'],
                      strict_slashes=True,
-                     view_func=AddressDetailView.as_view('address_detail'))
+                     view_func=address_detail_view_func)
+    app.add_url_rule('/year/add/', strict_slashes=True,
+                     view_func=YearAddView.as_view('year_add'))
     app.add_url_rule('/add/', methods=['GET', 'POST'], strict_slashes=True,
                      view_func=AddressAddView.as_view('address_add'))
     app.add_url_rule('/edit/<int:oid>/', methods=['GET', 'POST'],
@@ -56,8 +60,13 @@ def setup(app, max_byte=100000, backup_count=10):
                      view_func=AddressEditView.as_view('address_edit'))
     app.add_url_rule('/list/', strict_slashes=True,
                      view_func=PersonListView.as_view('person_list'))
+    app.add_url_rule('/list/<int:oid>/', strict_slashes=True,
+                     view_func=PersonDetailView.as_view('person_detail'))
+    export_view_func = AddressExportView.as_view('address_export')
+    app.add_url_rule('/export/', strict_slashes=True,
+                     view_func=export_view_func)
     app.add_url_rule('/export/<int:year>/', strict_slashes=True,
-                     view_func=AddressExportView.as_view('address_export'))
+                     view_func=export_view_func)
 
 def app_factory(config='config'):
     app = Flask(__name__)

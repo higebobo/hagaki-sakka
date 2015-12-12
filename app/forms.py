@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 # -*- mode: python -*- -*- coding: utf-8 -*-
+import datetime
 from flask import url_for
-try:
-    from flask_babel import lazy_gettext as _
-except:
-    from flaskext.babel import lazy_gettext as _
+from flask.ext.babel import lazy_gettext as _
 from wtforms import Form, BooleanField, IntegerField, TextField, \
      TextAreaField, SelectField
 from wtforms import validators
-from wtforms.validators import Length, Required
+from wtforms.validators import Length, Required, ValidationError
 
 from config import DEFAULT_ENCODING, PERSONAL_TITLE_LIST, PY_VERSION
 
@@ -31,6 +29,16 @@ class BaseDataForm(Form):
                         choices=title_list())
     mail = TextField(_(u'mail'))
     mobile = TextField(_(u'mobile'))
+    zipcode = TextField(_(u'zip code'))
+    prefecture = TextField(_(u'prefecture'))
+    address1 = TextField(_(u'address %(n)s', n=1))
+    address2 = TextField(_(u'address %(n)s', n=2))
+    tel = TextField(_(u'telephone'))
+    fax = TextField(_(u'facsimile'))
+    abroad = BooleanField(_(u'abroad'))
+    invalid = BooleanField(_(u'invalid'))
+    note = TextAreaField(_(u'note'),
+                            validators=[Length(max=255)])
     firstname2 = TextField(_(u'first name %(n)s', n=2))
     title2 = SelectField(_(u'personal title %(n)s', n=2),
                         choices=title_list())
@@ -51,16 +59,6 @@ class BaseDataForm(Form):
                         choices=title_list())
     mail5 = TextField(_(u'mail %(n)s', n=5))
     mobile5 = TextField(_(u'mobile %(n)s', n=5))
-    zipcode = TextField(_(u'zip code'))
-    prefecture = TextField(_(u'prefecture'))
-    address1 = TextField(_(u'address %(n)s', n=1))
-    address2 = TextField(_(u'address %(n)s', n=2))
-    tel = TextField(_(u'telephone'))
-    fax = TextField(_(u'facsimile'))
-    abroad = BooleanField(_(u'abroad'))
-    invalid = BooleanField(_(u'invalid'))
-    note = TextAreaField(_(u'note'),
-                            validators=[Length(max=255)])
 
 class DataEditForm(BaseDataForm):
     pass
@@ -71,3 +69,16 @@ class NengaForm(Form):
     mourning = BooleanField(_(u'mourning'))
     address_unknown = BooleanField(_(u'address unknown'))
     note = TextAreaField(_(u'note'), validators=[Length(max=255)])
+
+class YearAddForm(Form):
+    year = IntegerField(_(u'year'))
+
+    def validate_year(form, field):
+        try:
+            int(field.data)
+        except Exception as e:
+            #print (e)
+            raise ValidationError(_(u'Not a valid integer value'))
+        year = datetime.datetime.now().year
+        if (field.data < year) or (field.data > year + 10):
+            raise ValidationError(_(u'Not adequate year value'))

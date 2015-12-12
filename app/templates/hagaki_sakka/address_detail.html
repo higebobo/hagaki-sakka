@@ -115,7 +115,7 @@
               <td><i class="fa fa-{% if object.receive %}check-square{% else %}square-o{% endif %}"></i></td>
               <td><i class="fa fa-{% if object.mourning %}check-square{% else %}square-o{% endif %}"></i></td>
               <td><i class="fa fa-{% if object.address_unknown %}check-square{% else %}square-o{% endif %}"></i></td>
-              <td>{{ object.note }}</td>
+              <td>{% if object.note %}{{ object.note }}{% endif %}</td>
             </tr>
 {% endfor %}           
           </tbody>
