@@ -9,3 +9,4 @@ assets/src
 #translations/ja/LC_MESSAGES/messages.mo
 messages.mo
 __pycache__
+TODO.org

@@ -27,6 +27,10 @@ run server (via GNU Make)
 
 ## Release note
 
+* 2015-12-12
+
+    - Add year form
+
 * 2015-10-19
 
     - Update to use class based view and so on
