@@ -3,7 +3,7 @@
 {% block content %}        
 {% if prev %}
         <p class="nav">
-          <a class="button round small" href="{{ url_for('address_detail', year=year, oid=prev.id) }}"><i class="fa fa-arrow-circle-left"></i>{{ prev.name }}</a>{% endif %}{% if next %}{% if prev %}&nbsp;{% endif %}<a class="button round small" href="{{ url_for('address_detail', year=year, oid=next.id) }}"><i class="fa fa-arrow-circle-right"></i>{{ next.name }}</a>
+          <a class="button round small" href="{{ url_for('address_detail', year=year, oid=prev.id) }}"><i class="fa fa-arrow-circle-left"></i>{{ prev.name }}</a>{% endif %}{% if next %}{% if prev %}&nbsp;{% endif %}<a class="button round small" href="{{ url_for('address_detail', year=year, oid=next.id) }}"><i class="fa fa-arrow-circle-right"></i>{{ next.name }}</a><a class="button round small info" href="../">{% if year %}{{ _('address list (%(year)s)', year=year) }}{% else %}{{ _('all person list') }}{% endif %}</a>
         </p>
 {%- endif %}        
         <h3>{{ _('basic information') }}</h3>
