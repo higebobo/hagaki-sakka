@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <form id="data" method="POST">
+          <div class="row">
+            <div class="small-1 columns">
+              <label class="right inline">{{ form.year.label }}</label>
+            </div>
+            <div class="small-2 columns">
+              {{ form.year }}
+            </div>            
+            <div class="small-2 columns">
+              <button class="round small alert" type="submit">{{ _('submit') }}</button>
+            </div>
+            <div class="small-7 columns end">
+              {% if form.year.errors %}<label class="left inline">{{ form.year.errors[0] }}</label>{% endif %}
+            </div>
+          </div>
+        </form>
+{% endblock %}
