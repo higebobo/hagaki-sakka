@@ -258,6 +258,7 @@ class AddressExportView(MethodView):
             object_list = object_list.filter_by(invalid=False)\
                           .filter_by(abroad=False).join(Nenga)\
                           .filter(Nenga.year==year)
+        object_list = object_list.order_by(Data.yomi)
         for x in object_list:
             row = (x.name, x.yomi, x.title, '', x.zipcode, x.address1,
                    x.address2, x.tel, x.fax, x.mobile, x.mail, '', '', x.note,
