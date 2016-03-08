@@ -17,7 +17,10 @@ def not_exist_makedirs(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
-def setup(app, max_byte=100000, backup_count=10):
+def app_factory(config='config', name=__name__, max_byte=100000,
+                backup_count=10):
+    app = Flask(name)
+    app.config.from_object(config)
     # logging
     formatter = logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s '
@@ -67,11 +70,6 @@ def setup(app, max_byte=100000, backup_count=10):
                      view_func=export_view_func)
     app.add_url_rule('/export/<int:year>/', strict_slashes=True,
                      view_func=export_view_func)
-
-def app_factory(config='config'):
-    app = Flask(__name__)
-    app.config.from_object(config)
-    setup(app)
 
     @app.errorhandler(404)
     def page_not_found(e):
