@@ -18,13 +18,14 @@ ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 DEFAULT_CONFIG_FILE = 'default.cfg'
 SITE_CONFIG_FILE = 'site.cfg'
 parser = ConfigParser()
-for ini in (DEFAULT_CONFIG_FILE, ):
+for ini in (DEFAULT_CONFIG_FILE, SITE_CONFIG_FILE):
     fullpath = os.path.join(ROOT_DIR, ini)
-    if not PY3:
-        inifile = io.open(fullpath, encoding=DEFAULT_ENCODING)
-        parser.readfp(inifile, fullpath)
-    else:
+    if PY3:
         parser.read(fullpath)
+    else:
+        if os.path.exists(fullpath):
+            inifile = io.open(fullpath, encoding=DEFAULT_ENCODING)
+            parser.readfp(inifile, fullpath)
 
 #
 # DEFAULT section
