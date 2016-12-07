@@ -1,47 +1,40 @@
 #!/usr/bin/env python
 # -*- mode: python -*- -*- coding: utf-8 -*-
 try:
-    import configparser
+    from ConfigParser import SafeConfigParser as ConfigParser
 except:
-    import ConfigParser as configparser
+    from configparser import ConfigParser
+import io
 import os
 import sys
-
-#
-# version
-#
-PY_VERSION = sys.version.split('.')[0]
-if PY_VERSION == '3':
-    PY3 = True
-else:
-    PY3 = False
 
 #
 # setting
 #
 DEFAULT_ENCODING = 'utf-8'
-CONFIG = configparser.ConfigParser()
-
-if PY3:
-    CONFIG.read('default.cfg', DEFAULT_ENCODING)
-else:
-    CONFIG.read('default.cfg')
-
-# function
-def u2(s):
+PY3 = sys.version_info[0] == 3
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+# parser
+DEFAULT_CONFIG_FILE = 'default.cfg'
+SITE_CONFIG_FILE = 'site.cfg'
+parser = ConfigParser()
+for ini in (DEFAULT_CONFIG_FILE, ):
+    fullpath = os.path.join(ROOT_DIR, ini)
     if not PY3:
-        return unicode(s, DEFAULT_ENCODING)
-    return s
+        inifile = io.open(fullpath, encoding=DEFAULT_ENCODING)
+        parser.readfp(inifile, fullpath)
+    else:
+        parser.read(fullpath)
 
 #
 # DEFAULT section
 #
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
-APP_NAME = CONFIG.get('DEFAULT', 'app_name')
-SITE_TITLE = u2(CONFIG.get('DEFAULT', 'site_title'))
+APP_NAME = parser.get('DEFAULT', 'app_name')
+SITE_TITLE = parser.get('DEFAULT', 'site_title')
 
 # admin
-SECRET_KEY = CONFIG.get('admin', 'secret')
+SECRET_KEY = parser.get('admin', 'secret')
 
 # directry
 DATA_DIR = os.path.join(ROOT_DIR, 'data')
@@ -50,15 +43,17 @@ STATIC_DIR = os.path.join(ROOT_DIR, 'static')
 TEMPLATE_DIR = os.path.join(ROOT_DIR, 'templates')
 
 # database
-DATABASE_PREFIX = CONFIG.get('database', 'prefix')
+DATABASE_PREFIX = parser.get('database', 'prefix')
 SQLALCHEMY_DATABASE = os.path.join(DATA_DIR, 'data.db')
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' +  SQLALCHEMY_DATABASE
 ECHO = False
 
 # data
-PERSONAL_TITLE_LIST = CONFIG.get('data', 'personal_title').split(',')
-DEBUG_LOG = CONFIG.get('data', 'debug_log')
-ERROR_LOG = CONFIG.get('data', 'error_log')
+PERSONAL_TITLE_LIST = parser.get('data', 'personal_title').split(',')
+DEBUG_LOG = parser.get('data', 'debug_log')
+ERROR_LOG = parser.get('data', 'error_log')
+CSV_ENCODING = parser.get('data', 'csv_encoding')
+SENDER_LIST = parser.get('data', 'sender_list').split(',')
 
 def main(argv):
     """main function"""

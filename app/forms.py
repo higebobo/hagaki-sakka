@@ -8,25 +8,16 @@ from wtforms import Form, BooleanField, IntegerField, TextField, \
 from wtforms import validators
 from wtforms.validators import Length, Required, ValidationError
 
-from config import DEFAULT_ENCODING, PERSONAL_TITLE_LIST, PY_VERSION
+from config import DEFAULT_ENCODING, PERSONAL_TITLE_LIST, PY3
 
-def title_list():
-    if PY_VERSION == '3':
-        result = [(x, x) for x in PERSONAL_TITLE_LIST]
-        result.insert(0, ('', ''))
-    else:
-        result = [(unicode(x, DEFAULT_ENCODING), unicode(x, DEFAULT_ENCODING))
-                  for x in PERSONAL_TITLE_LIST]
-        result.insert(0, (u'', u''))
-
-    return result
+person_title_list =  [(x, x) for x in PERSONAL_TITLE_LIST]
 
 class BaseDataForm(Form):
     name = TextField(_(u'name'))
     yomi = TextField(_(u'yomi'))
     title = SelectField(_(u'personal title'),
                         validators=[Required(),],
-                        choices=title_list())
+                        choices=person_title_list)
     mail = TextField(_(u'mail'))
     mobile = TextField(_(u'mobile'))
     zipcode = TextField(_(u'zip code'))
@@ -41,22 +32,22 @@ class BaseDataForm(Form):
                             validators=[Length(max=255)])
     firstname2 = TextField(_(u'first name %(n)s', n=2))
     title2 = SelectField(_(u'personal title %(n)s', n=2),
-                        choices=title_list())
+                        choices=person_title_list)
     mail2 = TextField(_(u'mail %(n)s', n=2))
     mobile2 = TextField(_(u'mobile %(n)s', n=2))
     firstname3 = TextField(_(u'first name %(n)s', n=3))
     title3 = SelectField(_(u'personal title %(n)s', n=3),
-                        choices=title_list())
+                        choices=person_title_list)
     mail3 = TextField(_(u'mail %(n)s', n=3))
     mobile3 = TextField(_(u'mobile %(n)s', n=3))
     firstname4 = TextField(_(u'first name %(n)s', n=4))
     title4 = SelectField(_(u'personal title %(n)s', n=4),
-                        choices=title_list())
+                        choices=person_title_list)
     mail4 = TextField(_(u'mail %(n)s', n=4))
     mobile4 = TextField(_(u'mobile %(n)s', n=4))
     firstname5 = TextField(_(u'first name %(n)s', n=5))
     title5 = SelectField(_(u'personal title %(n)s', n=5),
-                        choices=title_list())
+                        choices=person_title_list)
     mail5 = TextField(_(u'mail %(n)s', n=5))
     mobile5 = TextField(_(u'mobile %(n)s', n=5))
 

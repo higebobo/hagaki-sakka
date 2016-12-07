@@ -2,13 +2,17 @@ APP_DIR=app
 SCSS_DIR=assets/scss
 CSS_DIR=../../app/static/css
 PY2_HOME=${HOME}/.virtualenv/py27
-PY3_HOME=${HOME}/.virtualenv/py33
+PY3_HOME=${HOME}/.virtualenv/py3
 PYTHON=${PY2_HOME}/bin/python
+PYTHON3=${PY3_HOME}/bin/python
 PY2_BABEL=${PY2_HOME}/bin/pybabel
 PY3_BABEL=${PY3_HOME}/bin/pybabel
 PY_BABEL=${PY2_BABEL}
 
-all: run
+all: run3
+
+run3:
+	${PYTHON3} manage.py runserver
 
 run:
 	${PYTHON} manage.py runserver

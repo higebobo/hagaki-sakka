@@ -43,7 +43,9 @@ class Data(Base):
     note = Column(Text)
     abroad = Column(Boolean, default=False)
     invalid = Column(Boolean, default=False)
-    nenga = relationship("Nenga", backref='data')
+    nenga = relationship("Nenga", backref='data',
+                         cascade='all, delete-orphan')
+    sender = Column(String(10))
     updatetime = Column(DateTime, default=datetime.datetime.now())
     
     def __repr__(self):

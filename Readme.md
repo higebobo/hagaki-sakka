@@ -27,19 +27,14 @@ run server (via GNU Make)
 
 ## Release note
 
+* 2016-12-07
+    - Bug fix for Python3
 * 2015-12-12
-
     - Add year form
-
 * 2015-10-19
-
     - Update to use class based view and so on
-
 * 2014-12-27
-
     - Make repository in github.com
-
 * 2014-06-11
-
     - First release
 

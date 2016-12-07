@@ -1,31 +1,34 @@
 #!/usr/bin/env python
 # -*- mode: python -*- -*- coding: utf-8 -*-
-try:
-    from cStringIO import StringIO
-except:
-    from io import StringIO
 import csv
+import io
 import os
 
-from flask import Response, request, redirect, url_for, abort, flash, \
-     render_template, current_app, make_response
-from flask.views import View, MethodView
+from flask import (Response, request, redirect, url_for, abort, flash,
+                   render_template, current_app, make_response)
+from flask.views import (View, MethodView)
 from flask.ext.babel import gettext as _
 from sqlalchemy import func
 from sqlalchemy.orm.exc import NoResultFound
 
-from config import APP_NAME
+from config import (APP_NAME, PY3, CSV_ENCODING)
 from .database import db_session
-from .forms import DataEditForm, NengaForm, YearAddForm
-from .models import Nenga, Data
+from .forms import (DataEditForm, NengaForm, YearAddForm)
+from .models import (Nenga, Data)
 
-def tos(s):
-    if not s:
-        return ''
-    try:
-        return s.encode('cp932', 'ignore')
-    except:
+def tos(s, py3=PY3):
+    if py3:
         return s
+    if isinstance(s, int) or isinstance(s, float):
+        return str(s)
+    elif not s:
+        return ''
+    else:
+        try:
+            return s.encode('cp932', 'ignore')
+        except:
+            return s
+    return s
 
 class IndexView(View):
     def dispatch_request(self):
@@ -209,7 +212,6 @@ class AddressEditView(MethodView):
 
     def post(self, oid):
         data = self.is_exist(oid)
-        print data
         form = DataEditForm(request.form)
         if form.validate():
             """
@@ -257,7 +259,9 @@ class AddressExportView(MethodView):
         if year:
             object_list = object_list.filter_by(invalid=False)\
                           .filter_by(abroad=False).join(Nenga)\
-                          .filter(Nenga.year==year)
+                          .filter(Nenga.year==year)\
+                          .filter(Nenga.mourning==False)\
+                          .filter(Nenga.address_unknown==False)
         object_list = object_list.order_by(Data.yomi)
         for x in object_list:
             row = (x.name, x.yomi, x.title, '', x.zipcode, x.address1,
@@ -265,17 +269,24 @@ class AddressExportView(MethodView):
                    x.firstname2, '', x.title2, x.firstname3, '', x.title3,
                    x.firstname4, '', x.title4, x.firstname5, '', x.title5)
             data.append([tos(x) for x in row])
-
-        fp = StringIO()
+        if PY3:
+            fp = io.StringIO()
+        else:
+            fp = io.BytesIO()
         mime_type = 'application/octet-stream'
         writer = csv.writer(fp, delimiter=',', quotechar='"',
                             quoting=csv.QUOTE_MINIMAL)
-        writer.writerows(data)
+        writer.writerows([tos(x) for x in data])
         
         name = 'address'
         if year:
             name += str(year)
-        response = make_response(fp.getvalue())
+
+        output = fp.getvalue()
+        if PY3:
+            output = output.encode(CSV_ENCODING)
+            
+        response = make_response(output)
         response.headers['Content-Type'] = '%s' % mime_type
         response.headers['Content-Disposition'] = 'filename="%s.csv"' % name
         
