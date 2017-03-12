@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 # -*- mode: python -*- -*- coding: utf-8 -*-
 import logging
-from logging.handlers import RotatingFileHandler, SMTPHandler
+from logging.handlers import (RotatingFileHandler, SMTPHandler)
 import os
 
-from flask import Flask, request, redirect, session, url_for, flash, \
-     render_template
+from flask import (Flask, request, redirect, session, url_for, flash,
+                   render_template)
 from flask.ext.babel import Babel
 from flask.ext.babel import gettext as _
 
-from .views import IndexView, YearListView, YearAddView, PersonListView, \
-     PersonDetailView, AddressListView, AddressDetailView, AddressAddView, \
-     AddressEditView, AddressExportView
+from .views import (IndexView, YearListView, YearAddView, PersonListView,
+                    PersonDetailView, AddressListView, AddressDetailView,
+                    AddressAddView, AddressEditView, AddressExportView,
+                    AddressStatusView)
 
 def not_exist_makedirs(path):
     if not os.path.exists(path):
@@ -70,6 +71,8 @@ def app_factory(config='config', name=__name__, max_byte=100000,
                      view_func=export_view_func)
     app.add_url_rule('/export/<int:year>/', strict_slashes=True,
                      view_func=export_view_func)
+    app.add_url_rule('/status/', strict_slashes=True,
+                     view_func=AddressStatusView.as_view('address_status'))
 
     @app.errorhandler(404)
     def page_not_found(e):

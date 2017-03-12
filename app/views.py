@@ -291,3 +291,40 @@ class AddressExportView(MethodView):
         response.headers['Content-Disposition'] = 'filename="%s.csv"' % name
         
         return response
+
+class AddressStatusView(View):
+    def dispatch_request(self):
+        year = db_session.query(func.max(Nenga.year)).one()[0]
+        title = (u'氏名', u'グループ', u'年', u'送信', u'受信', u'喪中')
+    
+        data = [[tos(x) for x in title]]
+        object_list = db_session.query(Data).join(Nenga).order_by(Data.yomi)
+                          
+        for x in object_list:
+            for y in x.nenga:
+                if y.year == year:
+                    send = '1' if y.send else ''
+                    receive = '1' if y.receive else ''
+                    mourning = '1' if y.mourning else ''
+                    row = (x.name, x.note, y.year, send, receive, mourning)
+            data.append([tos(x) for x in row])
+        if PY3:
+            fp = io.StringIO()
+        else:
+            fp = io.BytesIO()
+        mime_type = 'application/octet-stream'
+        writer = csv.writer(fp, delimiter=',', quotechar='"',
+                            quoting=csv.QUOTE_MINIMAL)
+        writer.writerows([tos(x) for x in data])
+        
+        name = 'address_status'
+
+        output = fp.getvalue()
+        if PY3:
+            output = output.encode(CSV_ENCODING)
+            
+        response = make_response(output)
+        response.headers['Content-Type'] = '%s' % mime_type
+        response.headers['Content-Disposition'] = 'filename="%s.csv"' % name
+        
+        return response
