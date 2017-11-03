@@ -2,7 +2,7 @@
 # -*- mode: python -*- -*- coding: utf-8 -*-
 import datetime
 from flask import url_for
-from flask.ext.babel import lazy_gettext as _
+from flask_babel import lazy_gettext as _
 from wtforms import Form, BooleanField, IntegerField, TextField, \
      TextAreaField, SelectField
 from wtforms import validators

@@ -1,27 +1,19 @@
 APP_DIR=app
 SCSS_DIR=assets/scss
 CSS_DIR=../../app/static/css
-PY2_HOME=${HOME}/.virtualenv/py27
-PY3_HOME=${HOME}/.virtualenv/py3
-PYTHON=${PY2_HOME}/bin/python
-PYTHON3=${PY3_HOME}/bin/python
-PY2_BABEL=${PY2_HOME}/bin/pybabel
-PY3_BABEL=${PY3_HOME}/bin/pybabel
-PY_BABEL=${PY2_BABEL}
+PYTHON=`which python`
+PY_BABEL=`which pybabel`
 
-all: run3
-
-run3:
-	${PYTHON3} manage.py runserver
+all: run
 
 run:
-	${PYTHON} manage.py runserver
+	$(PYTHON) manage.py runserver
 
 shell:
-	${PYTHON} manage.py shell.py
+	$(PYTHON) manage.py shell.py
 
 test:
-	${PYTHON} manage.py test
+	$(PYTHON) manage.py test
 
 clean-css:
 	cd ${SCSS_DIR};rm -f *.css
@@ -34,10 +26,10 @@ scss-all: scss
 	cd ${SCSS_DIR};sass --style compressed foundation.scss:${CSS_DIR}/foundation.min.css
 
 babel-update:
-	cd ${APP_DIR};${PY_BABEL} extract -F translations/babel.cfg -k lazy_gettext -o translations/messages.pot . && ${PY_BABEL}  update -i translations/messages.pot -d translations
+	cd ${APP_DIR};$(BABEL) extract -F translations/babel.cfg -k lazy_gettext -o translations/messages.pot . && $(BABEL)  update -i translations/messages.pot -d translations
 
 babel-compile:
-	cd ${APP_DIR};${PY_BABEL} compile -d translations
+	cd ${APP_DIR};$(BABEL) compile -d translations
 
 status:
 	git status

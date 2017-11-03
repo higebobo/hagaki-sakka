@@ -7,7 +7,7 @@ import os
 from flask import (Response, request, redirect, url_for, abort, flash,
                    render_template, current_app, make_response)
 from flask.views import (View, MethodView)
-from flask.ext.babel import gettext as _
+from flask_babel import gettext as _
 from sqlalchemy import func
 from sqlalchemy.orm.exc import NoResultFound
 

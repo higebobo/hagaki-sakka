@@ -6,8 +6,8 @@ import os
 
 from flask import (Flask, request, redirect, session, url_for, flash,
                    render_template)
-from flask.ext.babel import Babel
-from flask.ext.babel import gettext as _
+from flask_babel import Babel
+from flask_babel import gettext as _
 
 from .views import (IndexView, YearListView, YearAddView, PersonListView,
                     PersonDetailView, AddressListView, AddressDetailView,
