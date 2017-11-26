@@ -35,7 +35,7 @@ class IndexView(View):
         year = db_session.query(func.max(Nenga.year)).one()[0]
         return redirect(url_for('.address_list', year=year))
 
-class YearListView(View):        
+class YearListView(View):
     def dispatch_request(self):
         object_list = [x[0] for x in db_session.query(Nenga.year)\
                        .group_by(Nenga.year).order_by(Nenga.year.desc()).all()]
@@ -124,7 +124,7 @@ class AddressDetailView(MethodView):
         ids = [x.id for x in object_list]
         current_index = ids.index(oid)
         data = object_list[current_index]
-        
+
         # navigation
         _prev = None
         _next = None
@@ -137,7 +137,7 @@ class AddressDetailView(MethodView):
             _next = ids[current_index+1]
         except:
             pass
-        
+
         return render_template('hagaki_sakka/address_detail.html',
                                year=year,
                                obj=data,
@@ -165,7 +165,7 @@ class AddressDetailView(MethodView):
                 flash(_(u'Error %(error)s', error=e))
                 current_app.logger.fatal(e)
                 db_session.rollback()
-                
+
             return redirect(url_for('.address_detail', year=year, oid=oid))
 
 class AddressAddView(MethodView):
@@ -244,16 +244,26 @@ class AddressEditView(MethodView):
                 flash(_(u'Error %(error)s', error=e))
                 current_app.logger.fatal(e)
                 db_session.rollback()
-            
+
         return render_template('hagaki_sakka/address_form.html',
                                form=form,
                                title=_(u'edit data for %(name)s',
                                        name=data.name))
 
 class AddressExportView(MethodView):
+    def conv(self, s):
+        if not s:
+            s = ''
+        s = s.replace(u'君', u'くん')
+        s = s.replace(u'さん', u'様')
+        return s
+
     def get(self, year=None):
-        title = (u'氏名', u'ふりがな', u'敬称', u'グループ', u'郵便番号', u'住所 1', u'住所 2', u'電話番号', u'FAX番号', u'携帯電話番号', u'メール 1', u'メール 2', u'ホームページ', u'備考', u'家族 1 名前', u'家族 1 ふりがな', u'家族 1 敬称', u'家族 2 名前', u'家族 2 ふりがな', u'家族 2 敬称', u'家族 3 名前', u'家族 3 ふりがな', u'家族 3 敬称', u'家族 4 名前', u'家族 4 ふりがな', u'家族 4 敬称', u'家族 5 名前', u'家族 5 ふりがな', u'家族 5 敬称')
-    
+        is_netprint = True if request.args.get('netprint') else False
+        if is_netprint:
+            title = (u'グループ', u'姓', u'名', u'敬称', u'郵便番号1', u'郵便番号2', u'都道府県', u'住所 1', u'住所 2', u'連名1名', u'連名1敬称', u'連名2名', u'連名2敬称', u'連名3名', u'連名3敬称',)
+        else:
+            title = (u'氏名', u'ふりがな', u'敬称', u'グループ', u'郵便番号', u'住所 1', u'住所 2', u'電話番号', u'FAX番号', u'携帯電話番号', u'メール 1', u'メール 2', u'ホームページ', u'備考', u'家族 1 名前', u'家族 1 ふりがな', u'家族 1 敬称', u'家族 2 名前', u'家族 2 ふりがな', u'家族 2 敬称', u'家族 3 名前', u'家族 3 ふりがな', u'家族 3 敬称', u'家族 4 名前', u'家族 4 ふりがな', u'家族 4 敬称', u'家族 5 名前', u'家族 5 ふりがな', u'家族 5 敬称')
         data = [[tos(x) for x in title]]
         object_list = db_session.query(Data)
         if year:
@@ -264,10 +274,20 @@ class AddressExportView(MethodView):
                           .filter(Nenga.address_unknown==False)
         object_list = object_list.order_by(Data.yomi)
         for x in object_list:
-            row = (x.name, x.yomi, x.title, '', x.zipcode, x.address1,
-                   x.address2, x.tel, x.fax, x.mobile, x.mail, '', '', x.note,
-                   x.firstname2, '', x.title2, x.firstname3, '', x.title3,
-                   x.firstname4, '', x.title4, x.firstname5, '', x.title5)
+            if is_netprint:
+                fullname = x.name.split(u'　')
+                if len(fullname) == 1:
+                    fullname.insert(0, u'　')
+                lastname, firstname = fullname
+                zip1, zip2 = x.zipcode.split('-')
+                row = (u'年賀', lastname, firstname, self.conv(x.title), zip1, zip2,
+                       x.prefecture, x.address1, x.address2, x.firstname2,
+                       self.conv(x.title2), x.firstname3, self.conv(x.title3))
+            else:
+                row = (x.name, x.yomi, x.title, '', x.zipcode, x.address1,
+                       x.address2, x.tel, x.fax, x.mobile, x.mail, '', '', x.note,
+                       x.firstname2, '', x.title2, x.firstname3, '', x.title3,
+                       x.firstname4, '', x.title4, x.firstname5, '', x.title5)
             data.append([tos(x) for x in row])
         if PY3:
             fp = io.StringIO()
@@ -277,7 +297,7 @@ class AddressExportView(MethodView):
         writer = csv.writer(fp, delimiter=',', quotechar='"',
                             quoting=csv.QUOTE_MINIMAL)
         writer.writerows([tos(x) for x in data])
-        
+
         name = 'address'
         if year:
             name += str(year)
@@ -285,21 +305,21 @@ class AddressExportView(MethodView):
         output = fp.getvalue()
         if PY3:
             output = output.encode(CSV_ENCODING)
-            
+
         response = make_response(output)
         response.headers['Content-Type'] = '%s' % mime_type
         response.headers['Content-Disposition'] = 'filename="%s.csv"' % name
-        
+
         return response
 
 class AddressStatusView(View):
     def dispatch_request(self):
         year = db_session.query(func.max(Nenga.year)).one()[0]
         title = (u'氏名', u'グループ', u'年', u'送信', u'受信', u'喪中')
-    
+
         data = [[tos(x) for x in title]]
         object_list = db_session.query(Data).join(Nenga).order_by(Data.yomi)
-                          
+
         for x in object_list:
             for y in x.nenga:
                 if y.year == year:
@@ -316,15 +336,15 @@ class AddressStatusView(View):
         writer = csv.writer(fp, delimiter=',', quotechar='"',
                             quoting=csv.QUOTE_MINIMAL)
         writer.writerows([tos(x) for x in data])
-        
+
         name = 'address_status'
 
         output = fp.getvalue()
         if PY3:
             output = output.encode(CSV_ENCODING)
-            
+
         response = make_response(output)
         response.headers['Content-Type'] = '%s' % mime_type
         response.headers['Content-Disposition'] = 'filename="%s.csv"' % name
-        
+
         return response

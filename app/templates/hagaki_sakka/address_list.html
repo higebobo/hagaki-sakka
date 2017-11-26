@@ -3,6 +3,7 @@
 {% block content %}
         <p>
           <a class="button small round" href="{% if year %}{{ url_for('.address_export', year=year) }}{% else %}{{ url_for('.address_export') }}{% endif %}"><i class="fa fa-download"></i>{{ _('download') }}</a>
+          <a class="button small round" href="{% if year %}{{ url_for('.address_export', year=year) }}{% else %}{{ url_for('.address_export') }}{% endif %}?netprint=1"><i class="fa fa-download"></i>{{ _('download') }}(netprint)</a>
           <a class="button small round" href="{{ url_for('.address_status') }}"><i class="fa fa-download"></i>{{ _('status') }}</a>
         </p>
         <table>
