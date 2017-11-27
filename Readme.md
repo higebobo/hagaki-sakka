@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is address book manager and csv file generator for [Hagaki Sakka](http://www.hagakisakka.jp/).  
+This is address book manager and csv file generator for [Hagaki Sakka](http://www.hagakisakka.jp/).
 
 Now also available netprint csv format.  
 
