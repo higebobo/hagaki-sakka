@@ -262,32 +262,41 @@ class AddressExportView(MethodView):
         zen_space = '\u3000'
         is_netprint = True if request.args.get('netprint') else False
         if is_netprint:
-            title = (u'グループ', u'姓', u'名', u'姓カナ', u'名カナ', u'敬称', u'郵便番号1', u'郵便番号2', u'都道府県', u'住所 1', u'住所 2', u'連名1名', u'連名1敬称', u'連名2名', u'連名2敬称', u'連名3名', u'連名3敬称',)
+            title = (u'グループ', u'姓', u'名', u'姓カナ', u'名カナ', u'敬称', u'郵便番号1', u'郵便番号2', u'都道府県', u'住所 1', u'住所 2', u'連名1名', u'連名1敬称', u'連名2名', u'連名2敬称', u'連名3名', u'連名3敬称')
+            suffix = '_netprint'
         else:
             title = (u'氏名', u'ふりがな', u'敬称', u'グループ', u'郵便番号', u'住所 1', u'住所 2', u'電話番号', u'FAX番号', u'携帯電話番号', u'メール 1', u'メール 2', u'ホームページ', u'備考', u'家族 1 名前', u'家族 1 ふりがな', u'家族 1 敬称', u'家族 2 名前', u'家族 2 ふりがな', u'家族 2 敬称', u'家族 3 名前', u'家族 3 ふりがな', u'家族 3 敬称', u'家族 4 名前', u'家族 4 ふりがな', u'家族 4 敬称', u'家族 5 名前', u'家族 5 ふりがな', u'家族 5 敬称')
+            suffix = ''
         data = [[tos(x) for x in title]]
         object_list = db_session.query(Data)
         if year:
             object_list = object_list.filter_by(invalid=False)\
                           .filter_by(abroad=False).join(Nenga)\
                           .filter(Nenga.year==year)\
-                          .filter(Nenga.mourning==False)\
                           .filter(Nenga.address_unknown==False)
+            if not is_netprint:
+                object_list = object_list.filter(Nenga.mourning==False)
         object_list = object_list.order_by(Data.yomi)
         for x in object_list:
             if is_netprint:
                 fullname = x.name.split(zen_space)
                 if len(fullname) == 1:
-                    fullname.insert(0, zen_space)
+                    fullname.append(zen_space)
                 lastname, firstname = fullname
                 fullkana = x.yomi.split(zen_space)
                 if len(fullkana) == 1:
-                    fullkana.insert(0, zen_space)
+                    fullkana.append(zen_space)
                 sei, mei = fullkana
                 zip1, zip2 = x.zipcode.split('-')
-                row = (u'年賀', lastname, firstname, sei, mei, self.conv(x.title), zip1,
+                group = u'年賀'
+                if year:
+                    for y in x.nenga:
+                        if (y.year == year) and y.mourning:
+                            group = u'喪中'
+                row = (group, lastname, firstname, sei, mei, self.conv(x.title), zip1,
                        zip2, x.prefecture, x.address1, x.address2, x.firstname2,
-                       self.conv(x.title2), x.firstname3, self.conv(x.title3))
+                       self.conv(x.title2), x.firstname3, self.conv(x.title3),
+                       x.firstname4, self.conv(x.title4))
             else:
                 row = (x.name, x.yomi, x.title, '', x.zipcode, x.address1,
                        x.address2, x.tel, x.fax, x.mobile, x.mail, '', '', x.note,
@@ -303,7 +312,7 @@ class AddressExportView(MethodView):
                             quoting=csv.QUOTE_MINIMAL)
         writer.writerows([tos(x) for x in data])
 
-        name = 'address'
+        name = 'address' + suffix
         if year:
             name += str(year)
 

@@ -43,11 +43,10 @@ class Data(Base):
     note = Column(Text)
     abroad = Column(Boolean, default=False)
     invalid = Column(Boolean, default=False)
-    nenga = relationship("Nenga", backref='data',
-                         cascade='all, delete-orphan')
+    nenga = relationship("Nenga", backref='data', cascade='all, delete-orphan')
     sender = Column(String(10))
     updatetime = Column(DateTime, default=datetime.datetime.now())
-    
+
     def __repr__(self):
         return "<Data(%r)>" % self.name
 
@@ -61,8 +60,8 @@ class Nenga(Base):
     address_unknown = Column(Boolean, default=False)
     note = Column(Text)
     data_id = Column(Integer, ForeignKey('%s_data.id'%DATABASE_PREFIX))
-    
+
     __table_args__ = (UniqueConstraint(year, data_id),)
-    
+
     def __repr__(self):
         return "<Nenga(%s, %r)>" % (self.year, self.data.name)
