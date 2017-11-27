@@ -34,13 +34,17 @@ babel-compile:
 status:
 	git status
 
-commit:
-	git commit -a
+add:
+	git add .
+
+commit: add
+	git commit -m 'modify'
 
 pull:
 	git pull
+	git update
 
 push:
-	git push origin master
+	git push -u origin master
 
 commit-push: commit push
