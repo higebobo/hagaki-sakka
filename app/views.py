@@ -259,6 +259,7 @@ class AddressExportView(MethodView):
         return s
 
     def get(self, year=None):
+        zen_space = '\u3000'
         is_netprint = True if request.args.get('netprint') else False
         if is_netprint:
             title = (u'グループ', u'姓', u'名', u'姓カナ', u'名カナ', u'敬称', u'郵便番号1', u'郵便番号2', u'都道府県', u'住所 1', u'住所 2', u'連名1名', u'連名1敬称', u'連名2名', u'連名2敬称', u'連名3名', u'連名3敬称',)
@@ -275,13 +276,13 @@ class AddressExportView(MethodView):
         object_list = object_list.order_by(Data.yomi)
         for x in object_list:
             if is_netprint:
-                fullname = x.name.split(u'　')
+                fullname = x.name.split(zen_space)
                 if len(fullname) == 1:
-                    fullname.insert(0, u'　')
+                    fullname.insert(0, zen_space)
                 lastname, firstname = fullname
-                fullkana = x.yomi.split(u'　')
+                fullkana = x.yomi.split(zen_space)
                 if len(fullkana) == 1:
-                    fullkana.insert(0, u'　')
+                    fullkana.insert(0, zen_space)
                 sei, mei = fullkana
                 zip1, zip2 = x.zipcode.split('-')
                 row = (u'年賀', lastname, firstname, sei, mei, self.conv(x.title), zip1,
