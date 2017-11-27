@@ -4,7 +4,7 @@
 
 This is address book manager and csv file generator for [Hagaki Sakka](http://www.hagakisakka.jp/).  
 
-Require Python 2.7 or Python 3.3 (depend of Flask)
+Require Python >= 2.7 or Python >= 3.3 (depend of Flask)
 
 ## Install
 
@@ -27,6 +27,8 @@ run server (via GNU Make)
 
 ## Release note
 
+* 2017-11-26
+    - add download for netprint csv format
 * 2016-12-07
     - Bug fix for Python3
 * 2015-12-12
