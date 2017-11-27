@@ -1,6 +1,6 @@
 # Address Book Manager For Hagaki Sakka
 
-## General
+## Overview
 
 This is address book manager and csv file generator for [Hagaki Sakka](http://www.hagakisakka.jp/).  
 
@@ -28,7 +28,7 @@ run server (via GNU Make)
 ## Release note
 
 * 2017-11-26
-    - add download for netprint csv format
+    - Add download for netprint csv format
 * 2016-12-07
     - Bug fix for Python3
 * 2015-12-12
