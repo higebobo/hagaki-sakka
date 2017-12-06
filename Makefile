@@ -21,10 +21,6 @@ clean-css:
 scss: clean-css
 	cd ${SCSS_DIR};sass --style compressed style.scss:${CSS_DIR}/style.css
 
-scss-all: scss
-	cd ${SCSS_DIR};sass --style compressed normalize.scss:${CSS_DIR}/normalize.min.css
-	cd ${SCSS_DIR};sass --style compressed foundation.scss:${CSS_DIR}/foundation.min.css
-
 babel-update:
 	cd ${APP_DIR};$(BABEL) extract -F translations/babel.cfg -k lazy_gettext -o translations/messages.pot . && $(BABEL)  update -i translations/messages.pot -d translations
 

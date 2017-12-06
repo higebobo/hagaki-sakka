@@ -29,6 +29,8 @@ run server (via GNU Make)
 
 ## Release note
 
+* 2017-12-06
+    - Use cdn service instead of static css and javascript file
 * 2017-11-26
     - Add download for netprint csv format
 * 2016-12-07
