@@ -6,7 +6,7 @@ This is address book manager and csv file generator for [Hagaki Sakka](http://ww
 
 Now also available netprint csv format.
 
-Require Python >= 2.7 or Python >= 3.3 (depend of Flask)
+Require Python >= 2.7 or Python >= 3.3
 
 ## Install
 
@@ -14,7 +14,6 @@ get source from the repository
 
     $ git clone git://github.com/higebobo/hagaki-sakka.git
     $ cd hagaki-sakka
-    $ mkdir log
     $ mkdir data
 
 ## Run as web service
@@ -26,6 +25,11 @@ run server
 run server (via GNU Make)
 
     $ make run
+
+change permission if you need
+
+    $ chmod 777 data
+    $ chmod 666 data/data.db
 
 ## Release note
 
@@ -43,4 +47,3 @@ run server (via GNU Make)
     - Make repository in github.com
 * 2014-06-11
     - First release
-
