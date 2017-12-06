@@ -341,7 +341,7 @@ class AddressStatusView(View):
                     receive = '1' if y.receive else ''
                     mourning = '1' if y.mourning else ''
                     row = (x.name, x.note, y.year, send, receive, mourning)
-            data.append([tos(x) for x in row])
+                    data.append([tos(x) for x in row])
         if PY3:
             fp = io.StringIO()
         else:
