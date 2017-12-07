@@ -19,7 +19,7 @@
 {% for nenga in object_list %}
 {% if year %}{% set obj=nenga.data %}{% else %}{% set obj=nenga %}{% endif %}
             <tr>
-              <td>{% if year %}<i class="fa fa-{% if nenga.send %}check-square{% else %}square-o{% endif %}"></i><i class="fa fa-{% if nenga.mourning %}plus-square{% endif %}"></i>{% else %}<i class="fa fa-{% if not obj.invalid %}check-square{% else %}square-o{% endif %}"></i>{% endif %}</td>
+              <td><i class="fa fa-{% if year %}{% if nenga.send %}check-square{% else %}{% if nenga.mourning %}plus-square-o{% else %}square-o{% endif %}{% endif %}{% else %}{% if not obj.invalid %}check-square{% else %}square-o{% endif %}{% endif %}"></i></td>
               <td><a href="{% if year %}{{ url_for('.address_detail', year=year, oid=obj.id) }}{% else %}{{ url_for('.address_edit', oid=obj.id) }}{% endif %}">{{ obj.name }}{% if obj.yomi %}({{ obj.yomi }}){% endif %}&nbsp;{{ obj.title }}</a></td>
               <td>{% if obj.firstname2 -%}{{ obj.firstname2 }}{{ obj.title2 }}{%- endif %}{% if obj.firstname3 -%},&nbsp;{{ obj.firstname3 }}{{ obj.title3 }}{%- endif %}{% if obj.firstname4 -%},&nbsp;{{ obj.firstname4 }}{{ obj.title4 }}{%- endif %}{% if obj.firstname5 -%},&nbsp;{{ obj.firstname5 }}{{ obj.title5 }}{%- endif %}</td>
               <td>&#12320;{{ obj.zipcode }}&nbsp;{{ obj.prefecture }}{{ obj.address1 }}{{ obj.address2 }}</td>
