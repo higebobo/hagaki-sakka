@@ -329,7 +329,7 @@ class AddressExportView(MethodView):
 class AddressStatusView(View):
     def dispatch_request(self):
         year = db_session.query(func.max(Nenga.year)).one()[0]
-        title = (u'氏名', u'グループ', u'年', u'送信', u'受信', u'喪中')
+        title = (u'氏名', u'グループ', u'年', u'送信', u'受信', u'喪中', u'備考')
 
         data = [[tos(x) for x in title]]
         object_list = db_session.query(Data).join(Nenga).order_by(Data.yomi)
@@ -340,7 +340,7 @@ class AddressStatusView(View):
                     send = '1' if y.send else ''
                     receive = '1' if y.receive else ''
                     mourning = '1' if y.mourning else ''
-                    row = (x.name, x.note, y.year, send, receive, mourning)
+                    row = (x.name, x.note, y.year, send, receive, mourning, y.note)
                     data.append([tos(x) for x in row])
         if PY3:
             fp = io.StringIO()
